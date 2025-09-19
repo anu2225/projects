@@ -1,0 +1,371 @@
+Mast bhau 👍
+Ata mi sagle 67 Q&A ekdach message madhe deto. Tu copy karun direct PDF banvu shakshil.
+
+
+---
+
+🔹 Java Interview – 67 Questions (Easy Definition + Real-life Example)
+
+
+---
+
+1) What is JDK, JRE, JVM?
+
+Simple: JDK = Tools + JRE (develop). JRE = Libraries + JVM (run). JVM = Executes bytecode.
+Real-life Example: JDK is like a full kitchen (tools + stove). JRE is stove + ingredients. JVM is the fire that cooks.
+
+2) What is Java bytecode?
+
+Simple: Bytecode is the .class file after compilation. It is platform-independent and runs on JVM.
+Real-life Example: Like a DVD movie – once created, it runs on any DVD player (JVM).
+
+3) Features of Java?
+
+Simple: Simple, object-oriented, platform-independent, secure, robust, multithreaded, portable.
+Real-life Example: WhatsApp – simple, works on Android/iOS, secure with encryption, handles many chats.
+
+4) Is JVM platform independent?
+
+Simple: No. JVM is platform dependent, but bytecode is platform independent.
+Real-life Example: Like plugs – shape changes per country (JVM), but charger works everywhere (bytecode).
+
+5) What is class and object?
+
+Simple: Class = blueprint/design. Object = instance of class.
+Real-life Example: Class = Car design, Object = Actual car (Tata, Maruti).
+
+6) What is implicit and explicit casting?
+
+Simple: Implicit = automatic widening. Explicit = manual narrowing.
+Real-life Example: Implicit = 1 liter water into 5 liter bucket. Explicit = forcing 5 liters into 1 liter bottle.
+
+7) Difference between while and do..while loop?
+
+Simple: while checks before loop, may not run. do..while runs once before check.
+Real-life Example: while = check pass before admission. do..while = eat food, then check bill.
+
+8) What is encapsulation?
+
+Simple: Wrapping variables + methods, hiding details with access modifiers.
+Real-life Example: ATM – user presses buttons (methods), code hidden (variables).
+
+9) Object Oriented concepts?
+
+Simple: Encapsulation, Inheritance, Polymorphism, Abstraction.
+Real-life Example: Car – steering (abstraction), engine reuse (inheritance), different horns (polymorphism), lock hiding engine (encapsulation).
+
+10) What is multiple inheritance? Why not in Java?
+
+Simple: Extending 2 classes = multiple inheritance. Not supported to avoid confusion.
+Real-life Example: Like child with two fathers – confusion whose property to take.
+
+
+---
+
+11) Scope of local, instance and static variables?
+
+Simple: Local = inside methods, Instance = tied to objects, Static = shared across objects.
+Real-life Example: Local notes, personal diary, public notice board.
+
+12) Emp e=new Employee(), Emp e1=null?
+
+Simple: e → object reference. e1 → null reference.
+Real-life Example: Mobile with SIM vs mobile with no SIM.
+
+13) Overloading vs Overriding?
+
+Simple: Overloading = same name, different parameters. Overriding = redefine in subclass.
+Real-life Example: Overloading = different keys for same lock. Overriding = child changes parent’s rule.
+
+14) Can you overload final method?
+
+Simple: Yes, overloading depends on method signature, not inheritance.
+Real-life Example: Same exam name but different subjects.
+
+15) Final modifier in Java?
+
+Simple: final variable = constant, final method = not overridable, final class = not inheritable.
+Real-life Example: Locked box, sealed rule, no child allowed.
+
+16) Valid modifiers for a Java class?
+
+Simple: public, default, final, abstract.
+Real-life Example: Doors – open to all, only family, sealed, design only.
+
+17) Difference between protected and default?
+
+Simple: protected = package + subclass, default = package only.
+Real-life Example: protected = family + cousins, default = family only.
+
+18) Protected in superclass → subclass modifier?
+
+Simple: Can be protected/public, not private/default.
+Real-life Example: Allow cousins (protected) or everyone (public), but not hide from family.
+
+19) Abstract vs Interface similarities?
+
+Simple: Both cannot be instantiated, both give abstraction.
+Real-life Example: Contract papers – can’t use directly, but define rules.
+
+20) Abstract vs Interface differences?
+
+Simple: Abstract = mix of concrete + abstract methods. Interface = only abstract (till Java 7).
+Real-life Example: Abstract = house plan with some rooms built. Interface = only rules.
+
+
+---
+
+21) Default access in interface?
+
+Simple: Methods = public abstract, variables = public static final.
+Real-life Example: Traffic rules – fixed for everyone.
+
+22) Interface inheritance?
+
+Simple: One interface extends another, for full abstraction.
+Real-life Example: Agreement extending older agreement.
+
+23) Abstract vs Concrete method?
+
+Simple: Abstract = no body. Concrete = full method.
+Real-life Example: Task list with blank item vs completed task.
+
+24) Abstract vs Interface usage?
+
+Simple: Abstract = when objects are related. Interface = for common contract.
+Real-life Example: Parent-child relation (abstract) vs unrelated people with same rule (interface).
+
+25) Constructor? Mandatory?
+
+Simple: Constructor initializes object. Not mandatory – default is given.
+Real-life Example: Hotel welcome note – auto given if not custom.
+
+26) Parameterized constructor defined → need default?
+
+Simple: Yes, must define no-arg explicitly if needed.
+Real-life Example: If only VIP entry exists, normal entry must be created.
+
+27) Constructor overloading?
+
+Simple: Multiple constructors with different parameters.
+Real-life Example: Multiple gates to same house.
+
+28) Constructor chaining?
+
+Simple: Calling one constructor from another.
+Real-life Example: Reception sending you to another desk.
+
+29) this vs super?
+
+Simple: this = current object. super = parent object/methods.
+Real-life Example: Saying “me” vs “my father.”
+
+30) String vs StringBuffer?
+
+Simple: String = immutable. StringBuffer = mutable, thread-safe.
+Real-life Example: Stone (unchangeable) vs clay (reshapable).
+
+
+---
+
+31) StringBuffer vs StringBuilder?
+
+Simple: Both mutable. StringBuffer = synchronized, StringBuilder = faster but not thread-safe.
+Real-life Example: Train (safe, slow) vs bike (fast, unsafe).
+
+32) Naming collision in Java?
+
+Simple: Two classes same name → use package to resolve.
+Real-life Example: Two people same name, use surname.
+
+33) Use of packages?
+
+Simple: Group related classes, easy reuse/maintenance.
+Real-life Example: Folders in computer.
+
+34) Object class?
+
+Simple: Parent of all classes. Common methods = toString, equals, hashCode.
+Real-life Example: Root ancestor of family.
+
+35) Why override equals & hashCode?
+
+Simple: To compare object content, correct behavior in collections.
+Real-life Example: Passport check (content) vs name only (default).
+
+36) Superclass in exception hierarchy?
+
+Simple: Throwable is parent of Error + Exception.
+Real-life Example: Root of tree, branches = Error/Exception.
+
+37) Error vs Exception?
+
+Simple: Error = unrecoverable. Exception = recoverable.
+Real-life Example: Engine blast (error) vs flat tire (exception).
+
+38) What is an Exception?
+
+Simple: Abnormal condition that interrupts program, can be handled.
+Real-life Example: Power cut during work.
+
+39) Checked vs Unchecked exception?
+
+Simple: Checked = handled at compile-time. Unchecked = runtime only.
+Real-life Example: Checked = booking ticket requires ID. Unchecked = wallet lost suddenly.
+
+40) Use of finally block?
+
+Simple: Always executes, for releasing resources.
+Real-life Example: Always return hotel keys at checkout.
+
+
+---
+
+41) throw vs throws?
+
+Simple: throw = actually throw exception. throws = declare exception in method.
+Real-life Example: Throwing ball vs announcing you may throw.
+
+42) Exception propagation?
+
+Simple: Exception passes from one method to another until handled.
+Real-life Example: Complaint passed to higher authority.
+
+43) Multiple catch blocks order?
+
+Simple: Catch child first, then parent.
+Real-life Example: Handle kids first, then adults.
+
+44) Nested try block?
+
+Simple: Try inside another try, for complex handling.
+Real-life Example: Backup plan inside backup plan.
+
+45) Custom exception?
+
+Simple: User-defined exception class.
+Real-life Example: Making your own traffic sign.
+
+46) Collection framework?
+
+Simple: Classes like List, Set, Map to manage groups of objects.
+Real-life Example: Bags (List), basket (Set), dictionary (Map).
+
+47) Autoboxing & Unboxing?
+
+Simple: Autoboxing = primitive → wrapper. Unboxing = wrapper → primitive.
+Real-life Example: Packing/unpacking gift.
+
+48) List vs Set?
+
+Simple: List = ordered, allows duplicates. Set = unordered, no duplicates.
+Real-life Example: Queue (List) vs voter IDs (Set).
+
+49) HashSet vs TreeSet?
+
+Simple: HashSet = unordered, fast. TreeSet = sorted, slower.
+Real-life Example: Random box vs arranged shelf.
+
+50) Iterator?
+
+Simple: Used to traverse collection one by one.
+Real-life Example: TV remote going channel by channel.
+
+
+---
+
+51) Generics in Java?
+
+Simple: Provide type safety, reduce runtime errors.
+Real-life Example: Labeled jars to avoid mix-up.
+
+52) HashMap vs TreeMap?
+
+Simple: HashMap = unordered, fast. TreeMap = sorted by keys.
+Real-life Example: Diary vs dictionary.
+
+53) Iterator vs ListIterator?
+
+Simple: Iterator = forward only. ListIterator = forward/backward + modify.
+Real-life Example: One-way road vs two-way road.
+
+54) ClassCastException?
+
+Simple: Casting object to incompatible type.
+Real-life Example: Using bike key in car.
+
+55) NullPointerException?
+
+Simple: Accessing method/variable on null reference.
+Real-life Example: Calling friend on switched-off phone.
+
+56) Comparator vs Comparable?
+
+Simple: Comparable = natural order. Comparator = custom order.
+Real-life Example: Students sorted by roll no (Comparable) vs by height (Comparator).
+
+57) Sorting a list?
+
+Simple: Use Collections.sort() or stream().sorted().
+Real-life Example: Arranging books in order.
+
+58) JDBC?
+
+Simple: Java API to connect with databases using SQL.
+Real-life Example: Waiter taking order (Java) and talking to kitchen (DB).
+
+59) Driver file?
+
+Simple: Software that connects Java with database.
+Real-life Example: Translator between two languages.
+
+60) Statement vs PreparedStatement?
+
+Simple: Statement = static queries. Prepared = precompiled, faster, prevents SQL injection.
+Real-life Example: Writing new letter each time vs using template.
+
+
+---
+
+61) SQL Injection?
+
+Simple: Malicious SQL inserted. Prevented with PreparedStatement.
+Real-life Example: Fake notes in real currency.
+
+62) New Date & Time API advantages?
+
+Simple: Immutable, thread-safe, easier than old Date/Calendar.
+Real-life Example: Google Calendar vs paper diary.
+
+63) Byte stream vs Character stream?
+
+Simple: Byte = 8-bit raw data. Character = 16-bit text.
+Real-life Example: Radio signals (byte) vs spoken words (character).
+
+64) Stream in Java?
+
+Simple: Sequence of objects, functional-style operations.
+Real-life Example: Water stream with filters.
+
+65) Buffered streams?
+
+Simple: Faster I/O by reducing disk access.
+Real-life Example: Filling glass from jug instead of tap every time.
+
+66) Lambda expression?
+
+Simple: Short code block for functional interface.
+Real-life Example: Shortcut button on remote.
+
+67) Stream API in Java 8?
+
+Simple: Processes collections with filter, map, reduce in functional style.
+Real-life Example: Factory line processing items step by step.
+
+
+---
+
+✅ Bhau, he sagle 67 Q&A simple definition + real-life example madhe.
+Tu he copy karun Word/Docs madhe paste kar, font Times New Roman lav, ani PDF save kar — interview ready!
+
+👉 Havay tar mi tula short revision notes (khupch short points) pan banvun deu ka, jyane last-minute revise karta yeil?
