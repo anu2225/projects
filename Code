@@ -32,9 +32,22 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // ✅ आता आपला custom constructor वापरू शकतो
-        user1 = new User(1L, "Test User 1", "test1@example.com", "secret123", Role.USER, "9876543210");
-        user2 = new User(2L, "Test User 2", "test2@example.com", "secret456", Role.ADMIN, "8765432109");
+        // ✅ Use setters instead of constructor
+        user1 = new User();
+        user1.setId(1L);
+        user1.setName("Test User 1");
+        user1.setEmail("test1@example.com");
+        user1.setPassword("secret123");
+        user1.setRole(Role.USER);
+        user1.setContactNumber("9876543210");
+
+        user2 = new User();
+        user2.setId(2L);
+        user2.setName("Test User 2");
+        user2.setEmail("test2@example.com");
+        user2.setPassword("secret456");
+        user2.setRole(Role.ADMIN);
+        user2.setContactNumber("8765432109");
     }
 
     @Test
