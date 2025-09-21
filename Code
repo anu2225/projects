@@ -1,0 +1,192 @@
+package com.cognizant.smarthotelbooking.controller;
+
+import com.cognizant.smarthotelbooking.entity.User;
+import com.cognizant.smarthotelbooking.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class UserControllerTest {
+
+    @InjectMocks
+    private UserController userController;
+
+    @Mock
+    private UserService userService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetAllUsers() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("Test User");
+
+        when(userService.getAllUsers()).thenReturn(Arrays.asList(user));
+
+        ResponseEntity<List<User>> response = userController.getAllUsers();
+
+        assertEquals(1, response.getBody().size());
+        assertEquals("Test User", response.getBody().get(0).getName());
+        verify(userService, times(1)).getAllUsers();
+    }
+
+    @Test
+    void testGetUserById() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("Test User");
+
+        when(userService.getUserById(1L)).thenReturn(Optional.of(user));
+
+        ResponseEntity<User> response = userController.getUserById(1L);
+
+        assertTrue(response.getBody() != null);
+        assertEquals("Test User", response.getBody().getName());
+        verify(userService, times(1)).getUserById(1L);
+    }
+}
+
+
+
+
+
+package com.cognizant.smarthotelbooking.controller;
+
+import com.cognizant.smarthotelbooking.entity.Hotel;
+import com.cognizant.smarthotelbooking.service.HotelService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class HotelControllerTest {
+
+    @InjectMocks
+    private HotelController hotelController;
+
+    @Mock
+    private HotelService hotelService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetAllHotels() {
+        Hotel hotel = new Hotel();
+        hotel.setId(1L);
+        hotel.setName("Taj Hotel");
+
+        when(hotelService.getAllHotels()).thenReturn(Arrays.asList(hotel));
+
+        ResponseEntity<List<Hotel>> response = hotelController.getAllHotels();
+
+        assertEquals(1, response.getBody().size());
+        assertEquals("Taj Hotel", response.getBody().get(0).getName());
+        verify(hotelService, times(1)).getAllHotels();
+    }
+
+    @Test
+    void testGetHotelById() {
+        Hotel hotel = new Hotel();
+        hotel.setId(1L);
+        hotel.setName("Taj Hotel");
+
+        when(hotelService.getHotelById(1L)).thenReturn(Optional.of(hotel));
+
+        ResponseEntity<Hotel> response = hotelController.getHotelById(1L);
+
+        assertNotNull(response.getBody());
+        assertEquals("Taj Hotel", response.getBody().getName());
+        verify(hotelService, times(1)).getHotelById(1L);
+    }
+}
+
+
+package com.cognizant.smarthotelbooking.controller;
+
+import com.cognizant.smarthotelbooking.entity.Room;
+import com.cognizant.smarthotelbooking.service.RoomService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class RoomControllerTest {
+
+    @InjectMocks
+    private RoomController roomController;
+
+    @Mock
+    private RoomService roomService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetAllRooms() {
+        Room room = new Room();
+        room.setId(101L);
+        room.setRoomNumber("101");
+
+        when(roomService.getAllRooms()).thenReturn(Arrays.asList(room));
+
+        ResponseEntity<List<Room>> response = roomController.getAllRooms();
+
+        assertEquals(1, response.getBody().size());
+        assertEquals("101", response.getBody().get(0).getRoomNumber());
+        verify(roomService, times(1)).getAllRooms();
+    }
+
+    @Test
+    void testGetRoomById() {
+        Room room = new Room();
+        room.setId(101L);
+        room.setRoomNumber("101");
+
+        when(roomService.getRoomById(101L)).thenReturn(Optional.of(room));
+
+        ResponseEntity<Room> response = roomController.getRoomById(101L);
+
+        assertNotNull(response.getBody());
+        assertEquals("101", response.getBody().getRoomNumber());
+        verify(roomService, times(1)).getRoomById(101L);
+    }
+}
+
+
