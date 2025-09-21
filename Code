@@ -32,9 +32,9 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // ✅ User तयार करताना setters वापरा
+        // ✅ Use setters instead of constructor
         user1 = new User();
-        user1.setId(1L);   // 👈 I capital
+        user1.setId(1L);
         user1.setName("Test User 1");
         user1.setEmail("test1@example.com");
         user1.setPassword("secret123");
@@ -42,7 +42,7 @@ class UserServiceImplTest {
         user1.setContactNumber("9876543210");
 
         user2 = new User();
-        user2.setId(2L);   // 👈 I capital
+        user2.setId(2L);
         user2.setName("Test User 2");
         user2.setEmail("test2@example.com");
         user2.setPassword("secret456");
