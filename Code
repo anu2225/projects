@@ -1,48 +1,69 @@
-package com.cognizant.smarthotelbooking.entity;
+package com.cognizant.smarthotelbooking.service.impl;
 
+import com.cognizant.smarthotelbooking.dto.responsedto.UserResponseDTO;
+import com.cognizant.smarthotelbooking.entity.User;
 import com.cognizant.smarthotelbooking.entity.enums.Role;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.cognizant.smarthotelbooking.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId")
-    private long userId;
-    @Column(name = "name", nullable = false, length = 40)
-    private String name;
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
-    @Column(name = "password", nullable = false)
-    private String password;
-    @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    @Column(name = "contactNumber",nullable = false, length = 10)
-    private String contactNumber;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    private boolean active = true;
+class UserServiceImplTest {
 
-    @OneToMany(mappedBy = "user")
-    private List<Booking> bookingList;
+    @Mock
+    private UserRepository userRepository;
 
-    @OneToMany(mappedBy = "user")
-    private List<Payment> paymentList;
+    @InjectMocks
+    private UserServiceImpl userService;
 
-    @OneToMany(mappedBy = "user")
-    private List<Review> reviewList;
+    private User user1;
+    private User user2;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private LoyaltyAccount loyaltyAccount;
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-    @OneToMany(mappedBy = "user")
-    private List<LoyaltyTransaction> loyaltyTransactionList;
+        // ✅ आता आपला custom constructor वापरू शकतो
+        user1 = new User(1L, "Test User 1", "test1@example.com", "secret123", Role.USER, "9876543210");
+        user2 = new User(2L, "Test User 2", "test2@example.com", "secret456", Role.ADMIN, "8765432109");
+    }
+
+    @Test
+    void testGetAllUsers() {
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+        List<UserResponseDTO> users = userService.getAllUsers();
+
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals("Test User 1", users.get(0).getName());
+    }
+
+    @Test
+    void testGetUserById_Found() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+
+        UserResponseDTO user = userService.getUserById(1L);
+
+        assertNotNull(user);
+        assertEquals("Test User 1", user.getName());
+    }
+
+    @Test
+    void testGetUserById_NotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        UserResponseDTO user = userService.getUserById(99L);
+
+        assertNull(user);
+    }
 }
