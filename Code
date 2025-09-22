@@ -96,14 +96,13 @@ class HotelControllerTest {
     }
 }
 
-
-
-
 package com.cognizant.smarthotelbooking.service;
 
+import com.cognizant.smarthotelbooking.dto.requestdto.HotelRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.HotelResponseDTO;
 import com.cognizant.smarthotelbooking.entity.Hotel;
 import com.cognizant.smarthotelbooking.repository.HotelRepository;
+import com.cognizant.smarthotelbooking.service.impl.HotelServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -160,11 +159,12 @@ class HotelServiceTest {
 
     @Test
     void testCreateHotel() {
-        Hotel hotel = new Hotel(3L, "Hyatt", "Pune", "Spa, WiFi", 4.2, 103L);
+        HotelRequestDTO req = new HotelRequestDTO("Hyatt", "Pune", "Spa, WiFi", 4.2, 103L);
+        Hotel saved = new Hotel(3L, "Hyatt", "Pune", "Spa, WiFi", 4.2, 103L);
 
-        when(hotelRepository.save(any(Hotel.class))).thenReturn(hotel);
+        when(hotelRepository.save(any(Hotel.class))).thenReturn(saved);
 
-        HotelResponseDTO result = hotelService.createHotel(hotel);
+        HotelResponseDTO result = hotelService.createHotel(req);
 
         assertEquals("Hyatt", result.getName());
         assertEquals("Pune", result.getLocation());
@@ -172,13 +172,14 @@ class HotelServiceTest {
 
     @Test
     void testUpdateHotel() {
+        HotelRequestDTO req = new HotelRequestDTO("Taj Updated", "Mumbai", "Pool, Spa", 5.0, 101L);
         Hotel existing = new Hotel(1L, "Taj", "Mumbai", "Pool, Spa", 5.0, 101L);
         Hotel updated = new Hotel(1L, "Taj Updated", "Mumbai", "Pool, Spa", 5.0, 101L);
 
         when(hotelRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(hotelRepository.save(any(Hotel.class))).thenReturn(updated);
 
-        HotelResponseDTO result = hotelService.updateHotel(1L, updated);
+        HotelResponseDTO result = hotelService.updateHotel(1L, req);
 
         assertEquals("Taj Updated", result.getName());
     }
@@ -188,7 +189,4 @@ class HotelServiceTest {
         hotelService.deleteHotel(1L);
     }
 }
-
-
-
 
