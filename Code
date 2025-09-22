@@ -2,8 +2,10 @@ package com.cognizant.smarthotelbooking.service;
 
 import com.cognizant.smarthotelbooking.dto.requestdto.RoomRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.RoomResponseDTO;
+import com.cognizant.smarthotelbooking.entity.Hotel;
 import com.cognizant.smarthotelbooking.entity.Room;
 import com.cognizant.smarthotelbooking.exception.RoomNotFoundException;
+import com.cognizant.smarthotelbooking.repository.HotelRepository;
 import com.cognizant.smarthotelbooking.repository.RoomRepository;
 import com.cognizant.smarthotelbooking.service.impl.RoomServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,24 +26,39 @@ class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private HotelRepository hotelRepository; // IMPORTANT: RoomServiceImpl uses this
+
     @InjectMocks
     private RoomServiceImpl roomService;
 
     private Room room;
     private RoomRequestDTO roomRequestDTO;
+    private Hotel hotel;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // build a Hotel entity that will be returned by hotelRepository.findById(...)
+        hotel = new Hotel();
+        hotel.setHotelId(10L);
+        hotel.setName("TestHotel");
+        hotel.setLocation("TestCity");
+        hotel.setAmenities("A,B");
+        hotel.setRating(4.0);
+        hotel.setManagerId(100L);
+
+        // Room entity (note: setHotel(hotel) because service expects room.getHotel())
         room = new Room();
         room.setRoomId(1L);
         room.setType("Deluxe");
         room.setPrice(2500.0);
         room.setAvailability(true);
         room.setFeatures("Sea view, AC, WiFi");
-        room.setHotelId(10L);
+        room.setHotel(hotel);
 
+        // Request DTO (no-args + setters as in your project)
         roomRequestDTO = new RoomRequestDTO();
         roomRequestDTO.setType("Deluxe");
         roomRequestDTO.setPrice(2500.0);
@@ -52,6 +69,9 @@ class RoomServiceTest {
 
     @Test
     void testCreateRoom() {
+        // service will call hotelRepository.findById(hotelId)
+        when(hotelRepository.findById(10L)).thenReturn(Optional.of(hotel));
+        // and then it will save the Room via roomRepository.save(...)
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         RoomResponseDTO response = roomService.createRoom(roomRequestDTO);
@@ -59,6 +79,7 @@ class RoomServiceTest {
         assertNotNull(response);
         assertEquals("Deluxe", response.getType());
         assertEquals(2500.0, response.getPrice());
+        // verify save called once
         verify(roomRepository, times(1)).save(any(Room.class));
     }
 
@@ -92,7 +113,9 @@ class RoomServiceTest {
 
     @Test
     void testUpdateRoom() {
+        // service reads existing room, updates fields, may read hotel if hotelId provided
         when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+        when(hotelRepository.findById(10L)).thenReturn(Optional.of(hotel));
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         RoomResponseDTO updated = roomService.updateRoom(1L, roomRequestDTO);
