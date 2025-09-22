@@ -2,6 +2,9 @@ package com.cognizant.smarthotelbooking.service;
 
 import com.cognizant.smarthotelbooking.dto.requestdto.RoomRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.RoomResponseDTO;
+import com.cognizant.smarthotelbooking.entity.Room;
+import com.cognizant.smarthotelbooking.exception.RoomNotFoundException;
+import com.cognizant.smarthotelbooking.repository.RoomRepository;
 import com.cognizant.smarthotelbooking.service.impl.RoomServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,107 +14,105 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class RoomServiceTest {
+
+    @Mock
+    private RoomRepository roomRepository;
 
     @InjectMocks
     private RoomServiceImpl roomService;
 
-    @Mock
-    private RoomRepository roomRepository; // जर तुझ्या serviceImpl मध्ये असेल तर
+    private Room room;
+    private RoomRequestDTO roomRequestDTO;
+    private RoomResponseDTO roomResponseDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
 
-    @Test
-    void testGetAllRooms() {
-        RoomResponseDTO r1 = new RoomResponseDTO();
-        r1.setRoomId(1L);
-        r1.setRoomType("Deluxe");
-        r1.setPricePerNight(5000.0);
-        r1.setAvailability(true);
-        r1.setHotelId(1L);
+        room = new Room();
+        room.setId(1L);
+        room.setRoomType("Deluxe");
+        room.setPricePerNight(2500.0);
+        room.setAvailable(true);
+        room.setHotelId(10L);
 
-        RoomResponseDTO r2 = new RoomResponseDTO();
-        r2.setRoomId(2L);
-        r2.setRoomType("Suite");
-        r2.setPricePerNight(10000.0);
-        r2.setAvailability(false);
-        r2.setHotelId(1L);
+        roomRequestDTO = new RoomRequestDTO();
+        roomRequestDTO.setRoomType("Deluxe");
+        roomRequestDTO.setPricePerNight(2500.0);
+        roomRequestDTO.setAvailable(true);
+        roomRequestDTO.setHotelId(10L);
 
-        when(roomService.getAllRooms()).thenReturn(Arrays.asList(r1, r2));
-
-        List<RoomResponseDTO> result = roomService.getAllRooms();
-        assertEquals(2, result.size());
-        assertEquals("Deluxe", result.get(0).getRoomType());
-    }
-
-    @Test
-    void testGetRoomById() {
-        RoomResponseDTO r = new RoomResponseDTO();
-        r.setRoomId(1L);
-        r.setRoomType("Deluxe");
-        r.setPricePerNight(5000.0);
-        r.setAvailability(true);
-        r.setHotelId(1L);
-
-        when(roomService.getRoomById(1L)).thenReturn(r);
-
-        RoomResponseDTO result = roomService.getRoomById(1L);
-        assertEquals("Deluxe", result.getRoomType());
+        roomResponseDTO = new RoomResponseDTO();
+        roomResponseDTO.setId(1L);
+        roomResponseDTO.setRoomType("Deluxe");
+        roomResponseDTO.setPricePerNight(2500.0);
+        roomResponseDTO.setAvailable(true);
+        roomResponseDTO.setHotelId(10L);
     }
 
     @Test
     void testCreateRoom() {
-        RoomRequestDTO req = new RoomRequestDTO();
-        req.setRoomType("Deluxe");
-        req.setPricePerNight(5000.0);
-        req.setAvailability(true);
-        req.setHotelId(1L);
+        when(roomRepository.save(any(Room.class))).thenReturn(room);
 
-        RoomResponseDTO res = new RoomResponseDTO();
-        res.setRoomId(1L);
-        res.setRoomType("Deluxe");
-        res.setPricePerNight(5000.0);
-        res.setAvailability(true);
-        res.setHotelId(1L);
+        RoomResponseDTO response = roomService.createRoom(roomRequestDTO);
 
-        when(roomService.createRoom(any(RoomRequestDTO.class))).thenReturn(res);
+        assertNotNull(response);
+        assertEquals("Deluxe", response.getRoomType());
+        assertEquals(2500.0, response.getPricePerNight());
+        verify(roomRepository, times(1)).save(any(Room.class));
+    }
 
-        RoomResponseDTO result = roomService.createRoom(req);
-        assertEquals("Deluxe", result.getRoomType());
+    @Test
+    void testGetRoomById_Found() {
+        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+
+        RoomResponseDTO response = roomService.getRoomById(1L);
+
+        assertNotNull(response);
+        assertEquals("Deluxe", response.getRoomType());
+        assertTrue(response.isAvailable());
+    }
+
+    @Test
+    void testGetRoomById_NotFound() {
+        when(roomRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RoomNotFoundException.class, () -> roomService.getRoomById(1L));
+    }
+
+    @Test
+    void testGetAllRooms() {
+        when(roomRepository.findAll()).thenReturn(Arrays.asList(room));
+
+        List<RoomResponseDTO> rooms = roomService.getAllRooms();
+
+        assertEquals(1, rooms.size());
+        assertEquals("Deluxe", rooms.get(0).getRoomType());
     }
 
     @Test
     void testUpdateRoom() {
-        RoomRequestDTO req = new RoomRequestDTO();
-        req.setRoomType("Suite");
-        req.setPricePerNight(8000.0);
-        req.setAvailability(true);
-        req.setHotelId(1L);
+        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+        when(roomRepository.save(any(Room.class))).thenReturn(room);
 
-        RoomResponseDTO res = new RoomResponseDTO();
-        res.setRoomId(1L);
-        res.setRoomType("Suite");
-        res.setPricePerNight(8000.0);
-        res.setAvailability(true);
-        res.setHotelId(1L);
+        RoomResponseDTO updated = roomService.updateRoom(1L, roomRequestDTO);
 
-        when(roomService.updateRoom(eq(1L), any(RoomRequestDTO.class))).thenReturn(res);
-
-        RoomResponseDTO result = roomService.updateRoom(1L, req);
-        assertEquals("Suite", result.getRoomType());
+        assertEquals("Deluxe", updated.getRoomType());
+        assertEquals(2500.0, updated.getPricePerNight());
     }
 
     @Test
     void testDeleteRoom() {
+        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+
         roomService.deleteRoom(1L);
+
+        verify(roomRepository, times(1)).delete(room);
     }
 }
