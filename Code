@@ -29,31 +29,27 @@ class RoomServiceTest {
 
     private Room room;
     private RoomRequestDTO roomRequestDTO;
-    private RoomResponseDTO roomResponseDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // Room entity
         room = new Room();
-        room.setId(1L);
-        room.setRoomType("Deluxe");
-        room.setPricePerNight(2500.0);
-        room.setAvailable(true);
+        room.setRoomId(1L);
+        room.setType("Deluxe");
+        room.setPrice(2500.0);
+        room.setAvailability(true);
+        room.setFeatures("Sea view, AC, WiFi");
         room.setHotelId(10L);
 
+        // RoomRequestDTO
         roomRequestDTO = new RoomRequestDTO();
-        roomRequestDTO.setRoomType("Deluxe");
-        roomRequestDTO.setPricePerNight(2500.0);
-        roomRequestDTO.setAvailable(true);
+        roomRequestDTO.setType("Deluxe");
+        roomRequestDTO.setPrice(2500.0);
+        roomRequestDTO.setAvailability(true);
+        roomRequestDTO.setFeatures("Sea view, AC, WiFi");
         roomRequestDTO.setHotelId(10L);
-
-        roomResponseDTO = new RoomResponseDTO();
-        roomResponseDTO.setId(1L);
-        roomResponseDTO.setRoomType("Deluxe");
-        roomResponseDTO.setPricePerNight(2500.0);
-        roomResponseDTO.setAvailable(true);
-        roomResponseDTO.setHotelId(10L);
     }
 
     @Test
@@ -63,8 +59,8 @@ class RoomServiceTest {
         RoomResponseDTO response = roomService.createRoom(roomRequestDTO);
 
         assertNotNull(response);
-        assertEquals("Deluxe", response.getRoomType());
-        assertEquals(2500.0, response.getPricePerNight());
+        assertEquals("Deluxe", response.getType());
+        assertEquals(2500.0, response.getPrice());
         verify(roomRepository, times(1)).save(any(Room.class));
     }
 
@@ -75,8 +71,8 @@ class RoomServiceTest {
         RoomResponseDTO response = roomService.getRoomById(1L);
 
         assertNotNull(response);
-        assertEquals("Deluxe", response.getRoomType());
-        assertTrue(response.isAvailable());
+        assertEquals("Deluxe", response.getType());
+        assertTrue(response.isAvailability());
     }
 
     @Test
@@ -93,7 +89,7 @@ class RoomServiceTest {
         List<RoomResponseDTO> rooms = roomService.getAllRooms();
 
         assertEquals(1, rooms.size());
-        assertEquals("Deluxe", rooms.get(0).getRoomType());
+        assertEquals("Deluxe", rooms.get(0).getType());
     }
 
     @Test
@@ -103,8 +99,8 @@ class RoomServiceTest {
 
         RoomResponseDTO updated = roomService.updateRoom(1L, roomRequestDTO);
 
-        assertEquals("Deluxe", updated.getRoomType());
-        assertEquals(2500.0, updated.getPricePerNight());
+        assertEquals("Deluxe", updated.getType());
+        assertEquals(2500.0, updated.getPrice());
     }
 
     @Test
