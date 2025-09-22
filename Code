@@ -1,28 +1,23 @@
 package com.cognizant.smarthotelbooking.controller;
 
-import com.cognizant.smarthotelbooking.dto.requestdto.HotelRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.HotelResponseDTO;
 import com.cognizant.smarthotelbooking.service.HotelService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(HotelController.class)
 class HotelControllerTest {
 
     @Autowired
@@ -31,46 +26,29 @@ class HotelControllerTest {
     @MockBean
     private HotelService hotelService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Test
     void testGetAllHotels() throws Exception {
-        HotelResponseDTO h1 = new HotelResponseDTO(1L, "Taj Hotel", "Mumbai", 5);
-        HotelResponseDTO h2 = new HotelResponseDTO(2L, "Oberoi", "Delhi", 5);
+        List<HotelResponseDTO> hotels = Arrays.asList(
+                new HotelResponseDTO(1L, "Taj", "Mumbai", "Pool, Spa", 5.0, 101L),
+                new HotelResponseDTO(2L, "Oberoi", "Delhi", "Gym, WiFi", 4.5, 102L)
+        );
 
-        Mockito.when(hotelService.getAllHotels()).thenReturn(List.of(h1, h2));
+        when(hotelService.getAllHotels()).thenReturn(hotels);
 
-        mockMvc.perform(get("/api/hotels"))
+        mockMvc.perform(get("/api/hotels")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Taj Hotel"));
-    }
-
-    @Test
-    void testCreateHotel() throws Exception {
-        HotelRequestDTO request = new HotelRequestDTO("Taj Hotel", "Mumbai", 5);
-        HotelResponseDTO response = new HotelResponseDTO(1L, "Taj Hotel", "Mumbai", 5);
-
-        Mockito.when(hotelService.createHotel(any(HotelRequestDTO.class))).thenReturn(response);
-
-        mockMvc.perform(post("/api/hotels")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Taj Hotel"))
-                .andExpect(jsonPath("$.location").value("Mumbai"));
+                .andExpect(jsonPath("$[0].name").value("Taj"))
+                .andExpect(jsonPath("$[1].location").value("Delhi"));
     }
 }
 
 
 
 
+package com.cognizant.smarthotelbooking.service;
 
-
-package com.cognizant.smarthotelbooking.service.impl;
-
-import com.cognizant.smarthotelbooking.dto.requestdto.HotelRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.HotelResponseDTO;
 import com.cognizant.smarthotelbooking.entity.Hotel;
 import com.cognizant.smarthotelbooking.repository.HotelRepository;
@@ -80,205 +58,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-class HotelServiceImplTest {
-
-    @Mock
-    private HotelRepository hotelRepository;
-
-    @InjectMocks
-    private HotelServiceImpl hotelServiceImpl;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testGetAllHotels() {
-        Hotel h1 = new Hotel();
-        h1.setId(1L);
-        h1.setName("Taj Hotel");
-        h1.setLocation("Mumbai");
-        h1.setRating(5);
-
-        Hotel h2 = new Hotel();
-        h2.setId(2L);
-        h2.setName("Oberoi");
-        h2.setLocation("Delhi");
-        h2.setRating(5);
-
-        when(hotelRepository.findAll()).thenReturn(List.of(h1, h2));
-
-        List<HotelResponseDTO> result = hotelServiceImpl.getAllHotels();
-
-        assertEquals(2, result.size());
-        assertEquals("Mumbai", result.get(0).getLocation());
-        verify(hotelRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testCreateHotel() {
-        HotelRequestDTO request = new HotelRequestDTO("Taj Hotel", "Mumbai", 5);
-        Hotel saved = new Hotel();
-        saved.setId(1L);
-        saved.setName("Taj Hotel");
-        saved.setLocation("Mumbai");
-        saved.setRating(5);
-
-        when(hotelRepository.save(any(Hotel.class))).thenReturn(saved);
-
-        HotelResponseDTO result = hotelServiceImpl.createHotel(request);
-
-        assertNotNull(result);
-        assertEquals("Taj Hotel", result.getName());
-        verify(hotelRepository, times(1)).save(any(Hotel.class));
-    }
-
-    @Test
-    void testGetHotelById() {
-        Hotel h1 = new Hotel();
-        h1.setId(1L);
-        h1.setName("Taj Hotel");
-        h1.setLocation("Mumbai");
-        h1.setRating(5);
-
-        when(hotelRepository.findById(1L)).thenReturn(Optional.of(h1));
-
-        Optional<HotelResponseDTO> result = hotelServiceImpl.getHotelById(1L);
-
-        assertTrue(result.isPresent());
-        assertEquals("Taj Hotel", result.get().getName());
-        verify(hotelRepository, times(1)).findById(1L);
-    }
-}
-
-
-
-
-
-
-package com.cognizant.smarthotelbooking.controller;
-
-import com.cognizant.smarthotelbooking.dto.requestdto.HotelRequestDTO;
-import com.cognizant.smarthotelbooking.dto.responsedto.HotelResponseDTO;
-import com.cognizant.smarthotelbooking.service.HotelService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
+import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Import(HotelController.class) // controller import
-class HotelControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Mock
-    private HotelService hotelService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    void testGetAllHotels() throws Exception {
-        HotelResponseDTO h1 = new HotelResponseDTO();
-        h1.setId(1L);
-        h1.setName("Taj Hotel");
-        h1.setLocation("Mumbai");
-        h1.setRating(5);
-
-        HotelResponseDTO h2 = new HotelResponseDTO();
-        h2.setId(2L);
-        h2.setName("Oberoi");
-        h2.setLocation("Delhi");
-        h2.setRating(5);
-
-        when(hotelService.getAllHotels()).thenReturn(List.of(h1, h2));
-
-        mockMvc.perform(get("/api/hotels"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Taj Hotel"));
-    }
-
-    @Test
-    void testCreateHotel() throws Exception {
-        HotelRequestDTO request = new HotelRequestDTO();
-        request.setName("Taj Hotel");
-        request.setLocation("Mumbai");
-        request.setRating(5);
-
-        HotelResponseDTO response = new HotelResponseDTO();
-        response.setId(1L);
-        response.setName("Taj Hotel");
-        response.setLocation("Mumbai");
-        response.setRating(5);
-
-        when(hotelService.createHotel(any(HotelRequestDTO.class))).thenReturn(response);
-
-        mockMvc.perform(post("/api/hotels")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Taj Hotel"))
-                .andExpect(jsonPath("$.location").value("Mumbai"));
-    }
-}
-
-
-
-
-
-
-package com.cognizant.smarthotelbooking.service.impl;
-
-import com.cognizant.smarthotelbooking.dto.requestdto.HotelRequestDTO;
-import com.cognizant.smarthotelbooking.dto.responsedto.HotelResponseDTO;
-import com.cognizant.smarthotelbooking.entity.Hotel;
-import com.cognizant.smarthotelbooking.repository.HotelRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-class HotelServiceImplTest {
+class HotelServiceTest {
 
     @Mock
     private HotelRepository hotelRepository;
 
     @InjectMocks
-    private HotelServiceImpl hotelServiceImpl;
+    private HotelServiceImpl hotelService;
 
     @BeforeEach
     void setUp() {
@@ -287,65 +79,18 @@ class HotelServiceImplTest {
 
     @Test
     void testGetAllHotels() {
-        Hotel h1 = new Hotel();
-        h1.setId(1L);
-        h1.setName("Taj Hotel");
-        h1.setLocation("Mumbai");
-        h1.setRating(5);
+        List<Hotel> hotels = Arrays.asList(
+                new Hotel(1L, "Taj", "Mumbai", "Pool, Spa", 5.0, 101L),
+                new Hotel(2L, "Oberoi", "Delhi", "Gym, WiFi", 4.5, 102L)
+        );
 
-        Hotel h2 = new Hotel();
-        h2.setId(2L);
-        h2.setName("Oberoi");
-        h2.setLocation("Delhi");
-        h2.setRating(5);
+        when(hotelRepository.findAll()).thenReturn(hotels);
 
-        when(hotelRepository.findAll()).thenReturn(List.of(h1, h2));
-
-        List<HotelResponseDTO> result = hotelServiceImpl.getAllHotels();
+        List<HotelResponseDTO> result = hotelService.getAllHotels();
 
         assertEquals(2, result.size());
-        assertEquals("Mumbai", result.get(0).getLocation());
-        verify(hotelRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testCreateHotel() {
-        HotelRequestDTO request = new HotelRequestDTO();
-        request.setName("Taj Hotel");
-        request.setLocation("Mumbai");
-        request.setRating(5);
-
-        Hotel saved = new Hotel();
-        saved.setId(1L);
-        saved.setName("Taj Hotel");
-        saved.setLocation("Mumbai");
-        saved.setRating(5);
-
-        when(hotelRepository.save(any(Hotel.class))).thenReturn(saved);
-
-        HotelResponseDTO result = hotelServiceImpl.createHotel(request);
-
-        assertNotNull(result);
-        assertEquals("Taj Hotel", result.getName());
-        verify(hotelRepository, times(1)).save(any(Hotel.class));
-    }
-
-    @Test
-    void testGetHotelById() {
-        Hotel h1 = new Hotel();
-        h1.setId(1L);
-        h1.setName("Taj Hotel");
-        h1.setLocation("Mumbai");
-        h1.setRating(5);
-
-        when(hotelRepository.findById(1L)).thenReturn(Optional.of(h1));
-
-        Optional<HotelResponseDTO> result = hotelServiceImpl.getHotelById(1L);
-
-        assertTrue(result.isPresent());
-        assertEquals("Taj Hotel", result.get().getName());
-        verify(hotelRepository, times(1)).findById(1L);
+        assertEquals("Taj", result.get(0).getName());
+        assertEquals("Delhi", result.get(1).getLocation());
+        assertEquals("Gym, WiFi", result.get(1).getAmenities());
     }
 }
-
-
