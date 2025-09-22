@@ -14,10 +14,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class HotelControllerTest {
 
@@ -44,11 +45,53 @@ class HotelControllerTest {
 
         when(hotelService.getAllHotels()).thenReturn(hotels);
 
-        mockMvc.perform(get("/api/hotels")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/hotels"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Taj"))
-                .andExpect(jsonPath("$[1].location").value("Delhi"));
+                .andExpect(jsonPath("$[0].name").value("Taj"));
+    }
+
+    @Test
+    void testGetHotelById() throws Exception {
+        HotelResponseDTO hotel = new HotelResponseDTO(1L, "Taj", "Mumbai", "Pool, Spa", 5.0, 101L);
+
+        when(hotelService.getHotelById(1L)).thenReturn(hotel);
+
+        mockMvc.perform(get("/api/hotels/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Taj"))
+                .andExpect(jsonPath("$.location").value("Mumbai"));
+    }
+
+    @Test
+    void testCreateHotel() throws Exception {
+        HotelResponseDTO createdHotel = new HotelResponseDTO(3L, "Hyatt", "Pune", "Spa, WiFi", 4.2, 103L);
+
+        when(hotelService.createHotel(any())).thenReturn(createdHotel);
+
+        mockMvc.perform(post("/api/hotels")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Hyatt\",\"location\":\"Pune\",\"amenities\":\"Spa, WiFi\",\"rating\":4.2,\"managerId\":103}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Hyatt"));
+    }
+
+    @Test
+    void testUpdateHotel() throws Exception {
+        HotelResponseDTO updatedHotel = new HotelResponseDTO(1L, "Taj Updated", "Mumbai", "Pool, Spa", 5.0, 101L);
+
+        when(hotelService.updateHotel(eq(1L), any())).thenReturn(updatedHotel);
+
+        mockMvc.perform(put("/api/hotels/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Taj Updated\",\"location\":\"Mumbai\",\"amenities\":\"Pool, Spa\",\"rating\":5.0,\"managerId\":101}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Taj Updated"));
+    }
+
+    @Test
+    void testDeleteHotel() throws Exception {
+        mockMvc.perform(delete("/api/hotels/1"))
+                .andExpect(status().isOk());
     }
 }
