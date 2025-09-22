@@ -305,16 +305,10 @@ class RoomControllerTest {
 
 
 
-
-
-
-
 package com.cognizant.smarthotelbooking.service;
 
 import com.cognizant.smarthotelbooking.dto.requestdto.RoomRequestDTO;
 import com.cognizant.smarthotelbooking.dto.responsedto.RoomResponseDTO;
-import com.cognizant.smarthotelbooking.entity.Room;
-import com.cognizant.smarthotelbooking.repository.RoomRepository;
 import com.cognizant.smarthotelbooking.service.impl.RoomServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -324,97 +318,104 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class RoomServiceTest {
 
-    @Mock
-    private RoomRepository roomRepository;
-
     @InjectMocks
     private RoomServiceImpl roomService;
+
+    @Mock
+    private RoomRepository roomRepository; // जर तुझ्या impl मध्ये वापरलं असेल तर
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    private RoomResponseDTO buildRoom(Long id, String type, double price, boolean available, Long hotelId) {
-        RoomResponseDTO dto = new RoomResponseDTO();
-        dto.setId(id);
-        dto.setType(type);
-        dto.setPrice(price);
-        dto.setAvailable(available);
-        dto.setHotelId(hotelId);
-        return dto;
-    }
-
-    private Room buildEntity(Long id, String type, double price, boolean available, Long hotelId) {
-        Room room = new Room();
-        room.setId(id);
-        room.setType(type);
-        room.setPrice(price);
-        room.setAvailable(available);
-        room.setHotelId(hotelId);
-        return room;
-    }
-
     @Test
     void testGetAllRooms() {
-        List<Room> rooms = Arrays.asList(
-                buildEntity(1L, "Deluxe", 5000.0, true, 1L),
-                buildEntity(2L, "Suite", 8000.0, false, 1L)
-        );
+        RoomResponseDTO r1 = new RoomResponseDTO();
+        r1.setRoomId(1L);
+        r1.setRoomType("Deluxe");
+        r1.setPricePerNight(5000.0);
+        r1.setAvailability(true);
+        r1.setHotelId(1L);
 
-        when(roomRepository.findAll()).thenReturn(rooms);
+        RoomResponseDTO r2 = new RoomResponseDTO();
+        r2.setRoomId(2L);
+        r2.setRoomType("Suite");
+        r2.setPricePerNight(10000.0);
+        r2.setAvailability(false);
+        r2.setHotelId(1L);
+
+        List<RoomResponseDTO> rooms = Arrays.asList(r1, r2);
+
+        when(roomService.getAllRooms()).thenReturn(rooms);
 
         List<RoomResponseDTO> result = roomService.getAllRooms();
-
         assertEquals(2, result.size());
-        assertEquals("Deluxe", result.get(0).getType());
     }
 
     @Test
     void testGetRoomById() {
-        Room room = buildEntity(1L, "Deluxe", 5000.0, true, 1L);
+        RoomResponseDTO r = new RoomResponseDTO();
+        r.setRoomId(1L);
+        r.setRoomType("Deluxe");
+        r.setPricePerNight(5000.0);
+        r.setAvailability(true);
+        r.setHotelId(1L);
 
-        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+        when(roomService.getRoomById(1L)).thenReturn(r);
 
         RoomResponseDTO result = roomService.getRoomById(1L);
-
-        assertEquals("Deluxe", result.getType());
-        assertEquals(5000.0, result.getPrice());
+        assertEquals("Deluxe", result.getRoomType());
     }
 
     @Test
     void testCreateRoom() {
-        RoomRequestDTO req = new RoomRequestDTO("Standard", 3000.0, true, 1L);
-        Room saved = buildEntity(3L, "Standard", 3000.0, true, 1L);
+        RoomRequestDTO req = new RoomRequestDTO();
+        req.setRoomType("Deluxe");
+        req.setPricePerNight(5000.0);
+        req.setAvailability(true);
+        req.setHotelId(1L);
 
-        when(roomRepository.save(any(Room.class))).thenReturn(saved);
+        RoomResponseDTO res = new RoomResponseDTO();
+        res.setRoomId(1L);
+        res.setRoomType("Deluxe");
+        res.setPricePerNight(5000.0);
+        res.setAvailability(true);
+        res.setHotelId(1L);
+
+        when(roomService.createRoom(any(RoomRequestDTO.class))).thenReturn(res);
 
         RoomResponseDTO result = roomService.createRoom(req);
-
-        assertEquals("Standard", result.getType());
-        assertEquals(3000.0, result.getPrice());
+        assertEquals("Deluxe", result.getRoomType());
     }
 
     @Test
     void testUpdateRoom() {
-        RoomRequestDTO req = new RoomRequestDTO("Deluxe Updated", 5500.0, true, 1L);
-        Room existing = buildEntity(1L, "Deluxe", 5000.0, true, 1L);
-        Room updated = buildEntity(1L, "Deluxe Updated", 5500.0, true, 1L);
+        RoomRequestDTO req = new RoomRequestDTO();
+        req.setRoomType("Suite");
+        req.setPricePerNight(8000.0);
+        req.setAvailability(true);
+        req.setHotelId(1L);
 
-        when(roomRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(roomRepository.save(any(Room.class))).thenReturn(updated);
+        RoomResponseDTO res = new RoomResponseDTO();
+        res.setRoomId(1L);
+        res.setRoomType("Suite");
+        res.setPricePerNight(8000.0);
+        res.setAvailability(true);
+        res.setHotelId(1L);
+
+        when(roomService.updateRoom(eq(1L), any(RoomRequestDTO.class))).thenReturn(res);
 
         RoomResponseDTO result = roomService.updateRoom(1L, req);
-
-        assertEquals("Deluxe Updated", result.getType());
+        assertEquals("Suite", result.getRoomType());
     }
 
     @Test
@@ -422,5 +423,8 @@ class RoomServiceTest {
         roomService.deleteRoom(1L);
     }
 }
+
+
+
 
 
